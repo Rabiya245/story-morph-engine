@@ -18,9 +18,12 @@ const Hero = () => {
       
       {/* Content */}
       <div className="container relative z-10 mx-auto px-4 py-20 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-sm border border-border mb-8 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-glow)] transition-all duration-500">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium text-foreground">AI-Powered Story Animation</span>
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-sm border border-border shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-glow)] transition-all duration-500">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-foreground">AI-Powered Story Animation</span>
+          </div>
+          <p className="text-muted-foreground mt-3 text-sm">Bring your stories to life</p>
         </div>
         
         <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-[var(--gradient-primary)] leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -52,7 +55,11 @@ const Hero = () => {
         </div>
         
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-8 max-w-xl mx-auto mt-20 animate-in fade-in slide-in-from-bottom-7 duration-1000 delay-500">
+        <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-20 animate-in fade-in slide-in-from-bottom-7 duration-1000 delay-500">
+          <div className="text-center">
+            <div className="text-3xl md:text-4xl font-bold text-primary mb-2">1K+</div>
+            <div className="text-sm text-muted-foreground">Stories Created</div>
+          </div>
           <div className="text-center">
             <div className="text-3xl md:text-4xl font-bold text-secondary mb-2">4</div>
             <div className="text-sm text-muted-foreground">Characters Per Story</div>
