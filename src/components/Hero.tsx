@@ -52,11 +52,7 @@ const Hero = () => {
         </div>
         
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-20 animate-in fade-in slide-in-from-bottom-7 duration-1000 delay-500">
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-primary mb-2">10K+</div>
-            <div className="text-sm text-muted-foreground">Stories Created</div>
-          </div>
+        <div className="grid grid-cols-2 gap-8 max-w-xl mx-auto mt-20 animate-in fade-in slide-in-from-bottom-7 duration-1000 delay-500">
           <div className="text-center">
             <div className="text-3xl md:text-4xl font-bold text-secondary mb-2">4</div>
             <div className="text-sm text-muted-foreground">Characters Per Story</div>
