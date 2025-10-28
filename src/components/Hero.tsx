@@ -26,8 +26,11 @@ const Hero = () => {
           <p className="text-muted-foreground mt-3 text-sm">Bring your stories to life</p>
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-[var(--gradient-primary)] leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          Bring Your Stories to Life
+        <h1 className="text-6xl md:text-8xl font-bold mb-6 text-white leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          Bring Your Stories{" "}
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-yellow-400">
+            To Life
+          </span>
         </h1>
         
         <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-150">
@@ -57,8 +60,8 @@ const Hero = () => {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-20 animate-in fade-in slide-in-from-bottom-7 duration-1000 delay-500">
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-primary mb-2">1K+</div>
-            <div className="text-sm text-muted-foreground">Stories Created</div>
+            <div className="text-3xl md:text-4xl font-bold text-white mb-2">1K+</div>
+            <div className="text-sm text-white/80">Create Stories</div>
           </div>
           <div className="text-center">
             <div className="text-3xl md:text-4xl font-bold text-secondary mb-2">4</div>
