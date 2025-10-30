@@ -1,27 +1,16 @@
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Upload, X, UserCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Upload, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Character } from "@/pages/Index";
 
-interface Character {
-  id: number;
-  image: string | null;
-  name: string;
-  gender: string;
-  age: string;
-  role: string;
+interface CharacterUploaderProps {
+  characters: Character[];
+  setCharacters: (characters: Character[]) => void;
 }
 
-const CharacterUploader = () => {
-  const [characters, setCharacters] = useState<Character[]>([
-    { id: 1, image: null, name: "", gender: "", age: "", role: "" },
-    { id: 2, image: null, name: "", gender: "", age: "", role: "" },
-    { id: 3, image: null, name: "", gender: "", age: "", role: "" },
-    { id: 4, image: null, name: "", gender: "", age: "", role: "" },
-  ]);
+const CharacterUploader = ({ characters, setCharacters }: CharacterUploaderProps) => {
 
   const handleImageUpload = (id: number, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
