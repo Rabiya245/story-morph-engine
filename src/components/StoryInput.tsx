@@ -6,6 +6,7 @@ import { Mic, StopCircle, Wand2, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Character } from "@/pages/Index";
+import AnimatedVideoPlayer from "./AnimatedVideoPlayer";
 
 interface StoryInputProps {
   characters: Character[];
@@ -16,6 +17,7 @@ const StoryInput = ({ characters }: StoryInputProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [animation, setAnimation] = useState<string | null>(null);
+  const [scenes, setScenes] = useState<any[]>([]);
   const { toast } = useToast();
 
   const handleGenerate = async () => {
@@ -30,6 +32,7 @@ const StoryInput = ({ characters }: StoryInputProps) => {
     
     setIsGenerating(true);
     setAnimation(null);
+    setScenes([]);
 
     try {
       const { data, error } = await supabase.functions.invoke("generate-story", {
@@ -40,9 +43,10 @@ const StoryInput = ({ characters }: StoryInputProps) => {
 
       if (data?.animation) {
         setAnimation(data.animation);
+        setScenes(data.scenes || []);
         toast({
           title: "Animation Generated!",
-          description: "Your story has been transformed into an animation script!",
+          description: "Your story has been transformed into an animated video!",
         });
       }
     } catch (error) {
@@ -135,9 +139,18 @@ const StoryInput = ({ characters }: StoryInputProps) => {
               </p>
             </div>
 
+            {scenes.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-[var(--gradient-primary)]">
+                  Your Animated Story
+                </h3>
+                <AnimatedVideoPlayer scenes={scenes} />
+              </div>
+            )}
+
             {animation && (
               <div className="mt-6 p-6 rounded-lg bg-card/50 border border-primary/20 shadow-[var(--shadow-glow)]">
-                <h3 className="text-xl font-bold mb-4 text-primary">Generated Animation Script</h3>
+                <h3 className="text-xl font-bold mb-4 text-primary">Full Animation Script</h3>
                 <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap">
                   {animation}
                 </div>

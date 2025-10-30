@@ -91,8 +91,53 @@ Make it vivid, detailed, and production-ready.${characterContext}`;
 
     console.log("Animation generated successfully");
 
+    // Parse scenes and generate images for key scenes
+    const scenes = generatedAnimation.split(/Scene \d+:|Scene:|###/).filter((s: string) => s.trim());
+    const sceneImages = [];
+
+    // Generate images for first 5 scenes
+    for (let i = 0; i < Math.min(5, scenes.length); i++) {
+      const sceneText = scenes[i].trim().substring(0, 500);
+      
+      try {
+        const imagePrompt = `Create a cinematic animation frame for this scene: ${sceneText}. Style: vibrant, animated, story-book illustration.`;
+        
+        const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash-image-preview",
+            messages: [
+              { role: "user", content: imagePrompt }
+            ],
+            modalities: ["image", "text"]
+          }),
+        });
+
+        if (imageResponse.ok) {
+          const imageData = await imageResponse.json();
+          const imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+          if (imageUrl) {
+            sceneImages.push({
+              sceneNumber: i + 1,
+              imageUrl: imageUrl,
+              text: scenes[i].trim()
+            });
+          }
+        }
+      } catch (error) {
+        console.error(`Error generating image for scene ${i + 1}:`, error);
+      }
+    }
+
     return new Response(
-      JSON.stringify({ animation: generatedAnimation }),
+      JSON.stringify({ 
+        animation: generatedAnimation,
+        scenes: sceneImages
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
