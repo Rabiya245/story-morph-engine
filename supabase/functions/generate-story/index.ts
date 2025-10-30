@@ -95,14 +95,19 @@ Make it vivid, detailed, and production-ready.${characterContext}`;
     const scenes = generatedAnimation.split(/Scene \d+:|Scene:|###/).filter((s: string) => s.trim());
     const sceneImages = [];
 
-    // Generate images for first 5 scenes
+    // Generate images for first 5 scenes with character and camera info
     for (let i = 0; i < Math.min(5, scenes.length); i++) {
       const sceneText = scenes[i].trim().substring(0, 500);
       
       try {
-        const imagePrompt = `Create a cinematic animation frame for this scene: ${sceneText}. Style: vibrant, animated, story-book illustration.`;
+        // Extract character actions and emotions from scene text for animation data
+        const characterNames = activeCharacters.map((c: any) => c.name).join(', ');
         
-        const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const backgroundPrompt = `Create a cinematic animated background for this scene: ${sceneText}. 
+Style: vibrant, animated, story-book illustration background without characters. 
+Focus on the setting, environment, and atmosphere.`;
+        
+        const backgroundResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${LOVABLE_API_KEY}`,
@@ -111,20 +116,30 @@ Make it vivid, detailed, and production-ready.${characterContext}`;
           body: JSON.stringify({
             model: "google/gemini-2.5-flash-image-preview",
             messages: [
-              { role: "user", content: imagePrompt }
+              { role: "user", content: backgroundPrompt }
             ],
             modalities: ["image", "text"]
           }),
         });
 
-        if (imageResponse.ok) {
-          const imageData = await imageResponse.json();
-          const imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-          if (imageUrl) {
+        if (backgroundResponse.ok) {
+          const imageData = await backgroundResponse.json();
+          const backgroundUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+          
+          if (backgroundUrl) {
+            // Parse character positions and movements from scene text
+            const characterInfo = activeCharacters.map((char: any, idx: number) => ({
+              name: char.name,
+              imageUrl: char.imageUrl,
+              position: { x: 20 + (idx * 30), y: 60 }, // Default positions
+              action: sceneText.toLowerCase().includes(char.name?.toLowerCase() || '') ? 'active' : 'idle'
+            }));
+
             sceneImages.push({
               sceneNumber: i + 1,
-              imageUrl: imageUrl,
-              text: scenes[i].trim()
+              backgroundUrl: backgroundUrl,
+              text: scenes[i].trim(),
+              characters: characterInfo
             });
           }
         }

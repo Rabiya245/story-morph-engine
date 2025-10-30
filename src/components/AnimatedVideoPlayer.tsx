@@ -3,10 +3,18 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 
+interface Character {
+  name: string;
+  imageUrl?: string;
+  position: { x: number; y: number };
+  action: string;
+}
+
 interface Scene {
   sceneNumber: number;
-  imageUrl: string;
+  backgroundUrl: string;
   text: string;
+  characters: Character[];
 }
 
 interface AnimatedVideoPlayerProps {
@@ -52,12 +60,44 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
 
   return (
     <Card className="overflow-hidden bg-card/80 backdrop-blur-sm border-primary/20">
-      <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-accent/10">
+      <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden">
+        {/* Background with parallax effect */}
         <img
-          src={scene.imageUrl}
-          alt={`Scene ${scene.sceneNumber}`}
+          key={`bg-${currentScene}`}
+          src={scene.backgroundUrl}
+          alt={`Scene ${scene.sceneNumber} background`}
           className="w-full h-full object-cover animate-fade-in"
+          style={{
+            animation: 'fadeIn 0.5s ease-in, slowZoom 5s ease-in-out infinite alternate'
+          }}
         />
+        
+        {/* Animated characters */}
+        {scene.characters?.map((character, idx) => character.imageUrl && (
+          <div
+            key={`${currentScene}-${idx}`}
+            className="absolute transition-all duration-1000 ease-out"
+            style={{
+              left: `${character.position.x}%`,
+              bottom: `${character.position.y}%`,
+              transform: 'translateX(-50%)',
+              animation: character.action === 'active' 
+                ? 'bounce 2s ease-in-out infinite, fadeIn 0.8s ease-in' 
+                : 'gentle-float 3s ease-in-out infinite, fadeIn 0.8s ease-in',
+              animationDelay: `${idx * 0.2}s`
+            }}
+          >
+            <img
+              src={character.imageUrl}
+              alt={character.name}
+              className="h-32 w-auto object-contain drop-shadow-2xl"
+              style={{
+                filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.5))'
+              }}
+            />
+          </div>
+        ))}
+        
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
           <p className="text-white text-lg font-medium animate-fade-in">
             {scene.text.substring(0, 200)}...
