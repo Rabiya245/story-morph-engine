@@ -61,22 +61,26 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
   return (
     <Card className="overflow-hidden bg-card/80 backdrop-blur-sm border-primary/20">
       <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden">
-        {/* Background with parallax effect */}
-        <img
-          key={`bg-${currentScene}`}
-          src={scene.backgroundUrl}
-          alt={`Scene ${scene.sceneNumber} background`}
-          className="w-full h-full object-cover animate-fade-in"
-          style={{
-            animation: 'fadeIn 0.5s ease-in, slowZoom 5s ease-in-out infinite alternate'
-          }}
-        />
+        {/* Smooth crossfade backgrounds */}
+        {scenes.map((s, idx) => (
+          <img
+            key={`bg-${idx}`}
+            src={s.backgroundUrl}
+            alt={`Scene ${s.sceneNumber} background`}
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            style={{
+              opacity: idx === currentScene ? 1 : 0,
+              animation: idx === currentScene ? 'slowZoom 5s ease-in-out infinite alternate' : 'none',
+              zIndex: idx === currentScene ? 1 : 0
+            }}
+          />
+        ))}
         
-        {/* Animated characters */}
+        {/* Animated characters with smooth transitions */}
         {scene.characters?.map((character, idx) => character.imageUrl && (
           <div
             key={`${currentScene}-${idx}`}
-            className="absolute transition-all duration-1000 ease-out"
+            className="absolute transition-all duration-1000 ease-out z-10"
             style={{
               left: `${character.position.x}%`,
               bottom: `${character.position.y}%`,
@@ -90,7 +94,7 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
             <img
               src={character.imageUrl}
               alt={character.name}
-              className="h-32 w-auto object-contain drop-shadow-2xl"
+              className="h-32 w-auto object-contain drop-shadow-2xl transition-all duration-700"
               style={{
                 filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.5))'
               }}
@@ -98,12 +102,12 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
           </div>
         ))}
         
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-          <p className="text-white text-lg font-medium animate-fade-in">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 z-20">
+          <p className="text-white text-lg font-medium transition-all duration-500">
             {scene.text.substring(0, 200)}...
           </p>
         </div>
-        <div className="absolute top-4 right-4 bg-black/60 px-3 py-1 rounded-full">
+        <div className="absolute top-4 right-4 bg-black/60 px-3 py-1 rounded-full z-20">
           <span className="text-white text-sm font-semibold">
             Scene {currentScene + 1} / {scenes.length}
           </span>
