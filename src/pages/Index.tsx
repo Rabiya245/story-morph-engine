@@ -12,16 +12,15 @@ export interface Character {
   image: string | null;
   name: string;
   gender: string;
-  age: string;
   role: string;
 }
 
 const Index = () => {
   const [characters, setCharacters] = useState<Character[]>([
-    { id: 1, image: null, name: "", gender: "", age: "", role: "" },
-    { id: 2, image: null, name: "", gender: "", age: "", role: "" },
-    { id: 3, image: null, name: "", gender: "", age: "", role: "" },
-    { id: 4, image: null, name: "", gender: "", age: "", role: "" },
+    { id: 1, image: null, name: "", gender: "", role: "" },
+    { id: 2, image: null, name: "", gender: "", role: "" },
+    { id: 3, image: null, name: "", gender: "", role: "" },
+    { id: 4, image: null, name: "", gender: "", role: "" },
   ]);
 
   return (

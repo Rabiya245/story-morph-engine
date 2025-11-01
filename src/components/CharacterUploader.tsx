@@ -95,32 +95,18 @@ const CharacterUploader = ({ characters, setCharacters }: CharacterUploaderProps
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor={`gender-${character.id}`} className="text-sm font-medium mb-2 block">Gender</Label>
-                      <Select onValueChange={(value) => handleInputChange(character.id, 'gender', value)}>
-                        <SelectTrigger id={`gender-${character.id}`} className="bg-background/50 border-border/50">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor={`age-${character.id}`} className="text-sm font-medium mb-2 block">Age</Label>
-                      <Input
-                        id={`age-${character.id}`}
-                        type="number"
-                        placeholder="Age"
-                        value={character.age}
-                        onChange={(e) => handleInputChange(character.id, 'age', e.target.value)}
-                        className="bg-background/50 border-border/50 focus:border-primary"
-                      />
-                    </div>
+                  <div>
+                    <Label htmlFor={`gender-${character.id}`} className="text-sm font-medium mb-2 block">Gender</Label>
+                    <Select onValueChange={(value) => handleInputChange(character.id, 'gender', value)}>
+                      <SelectTrigger id={`gender-${character.id}`} className="bg-background/50 border-border/50">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
