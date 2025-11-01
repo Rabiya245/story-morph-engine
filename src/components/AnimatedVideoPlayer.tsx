@@ -76,31 +76,55 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
           />
         ))}
         
-        {/* Animated characters with smooth transitions */}
-        {scene.characters?.map((character, idx) => character.imageUrl && (
-          <div
-            key={`${currentScene}-${idx}`}
-            className="absolute transition-all duration-1000 ease-out z-10"
-            style={{
-              left: `${character.position.x}%`,
-              bottom: `${character.position.y}%`,
-              transform: 'translateX(-50%)',
-              animation: character.action === 'active' 
-                ? 'bounce 2s ease-in-out infinite, fadeIn 0.8s ease-in' 
-                : 'gentle-float 3s ease-in-out infinite, fadeIn 0.8s ease-in',
-              animationDelay: `${idx * 0.2}s`
-            }}
-          >
-            <img
-              src={character.imageUrl}
-              alt={character.name}
-              className="h-32 w-auto object-contain drop-shadow-2xl transition-all duration-700"
+        {/* Animated characters with dynamic movement */}
+        {scene.characters?.map((character, idx) => {
+          if (!character.imageUrl) return null;
+          
+          // Generate movement path based on action
+          const getMovementAnimation = () => {
+            const actions = ['walking', 'running', 'flying', 'jumping', 'talking', 'active'];
+            const action = actions.includes(character.action) ? character.action : 'walking';
+            
+            switch(action) {
+              case 'running':
+                return `moveLeftRight 3s ease-in-out infinite, bounce 0.3s ease-in-out infinite, fadeIn 0.8s ease-in`;
+              case 'flying':
+                return `moveUpDown 4s ease-in-out infinite, gentle-float 2s ease-in-out infinite, fadeIn 0.8s ease-in`;
+              case 'jumping':
+                return `jumpAnimation 1.5s ease-in-out infinite, fadeIn 0.8s ease-in`;
+              case 'walking':
+                return `moveLeftRight 5s ease-in-out infinite, subtle-bounce 0.6s ease-in-out infinite, fadeIn 0.8s ease-in`;
+              case 'talking':
+                return `gentle-float 3s ease-in-out infinite, fadeIn 0.8s ease-in`;
+              default:
+                return `moveLeftRight 4s ease-in-out infinite, gentle-float 2s ease-in-out infinite, fadeIn 0.8s ease-in`;
+            }
+          };
+
+          return (
+            <div
+              key={`${currentScene}-${idx}`}
+              className="absolute z-10"
               style={{
-                filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.5))'
+                left: `${character.position.x}%`,
+                bottom: `${character.position.y}%`,
+                transform: 'translateX(-50%)',
+                animation: getMovementAnimation(),
+                animationDelay: `${idx * 0.3}s`
               }}
-            />
-          </div>
-        ))}
+            >
+              <img
+                src={character.imageUrl}
+                alt={character.name}
+                className="h-32 w-auto object-contain drop-shadow-2xl"
+                style={{
+                  filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.5))',
+                  animation: character.action === 'talking' ? 'subtle-scale 0.5s ease-in-out infinite' : 'none'
+                }}
+              />
+            </div>
+          );
+        })}
         
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 z-20">
           <p className="text-white text-lg font-medium transition-all duration-500">
