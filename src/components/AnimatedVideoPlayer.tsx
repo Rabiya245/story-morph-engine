@@ -61,7 +61,7 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
   return (
     <Card className="overflow-hidden bg-card/80 backdrop-blur-sm border-primary/20">
       <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden">
-        {/* Smooth crossfade backgrounds */}
+        {/* Static backgrounds with smooth crossfade */}
         {scenes.map((s, idx) => (
           <img
             key={`bg-${idx}`}
@@ -70,7 +70,6 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
             style={{
               opacity: idx === currentScene ? 1 : 0,
-              animation: idx === currentScene ? 'slowZoom 5s ease-in-out infinite alternate' : 'none',
               zIndex: idx === currentScene ? 1 : 0
             }}
           />

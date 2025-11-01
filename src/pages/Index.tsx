@@ -1,9 +1,10 @@
 import { useState } from "react";
 import Hero from "@/components/Hero";
-import Features from "@/components/Features";
+import Explore from "@/components/Explore";
 import CharacterUploader from "@/components/CharacterUploader";
 import StoryInput from "@/components/StoryInput";
-import UseCases from "@/components/UseCases";
+import Scopes from "@/components/Scopes";
+import AboutUs from "@/components/AboutUs";
 import Footer from "@/components/Footer";
 
 export interface Character {
@@ -26,10 +27,11 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Hero />
-      <Features />
+      <Explore />
       <CharacterUploader characters={characters} setCharacters={setCharacters} />
       <StoryInput characters={characters} />
-      <UseCases />
+      <Scopes />
+      <AboutUs />
       <Footer />
     </div>
   );
