@@ -70,7 +70,6 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
             style={{
               opacity: idx === currentScene ? 1 : 0,
-              animation: idx === currentScene ? 'slowZoom 5s ease-in-out infinite alternate' : 'none',
               zIndex: idx === currentScene ? 1 : 0
             }}
           />

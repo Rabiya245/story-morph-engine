@@ -38,11 +38,12 @@ const CharacterUploader = ({ characters, setCharacters }: CharacterUploaderProps
   };
 
   return (
-    <section id="creator" className="py-24 px-4 bg-[var(--gradient-secondary)]">
-      <div className="container mx-auto">
+    <section id="creator" className="py-24 px-4 bg-[var(--gradient-secondary)] relative overflow-hidden">
+      <div className="absolute top-1/3 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+      <div className="container mx-auto relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-[var(--gradient-primary)]">
-            Create Your Characters
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+            Create Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Characters</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Upload images and define up to 4 unique characters for your story
@@ -95,32 +96,18 @@ const CharacterUploader = ({ characters, setCharacters }: CharacterUploaderProps
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor={`gender-${character.id}`} className="text-sm font-medium mb-2 block">Gender</Label>
-                      <Select onValueChange={(value) => handleInputChange(character.id, 'gender', value)}>
-                        <SelectTrigger id={`gender-${character.id}`} className="bg-background/50 border-border/50">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor={`age-${character.id}`} className="text-sm font-medium mb-2 block">Age</Label>
-                      <Input
-                        id={`age-${character.id}`}
-                        type="number"
-                        placeholder="Age"
-                        value={character.age}
-                        onChange={(e) => handleInputChange(character.id, 'age', e.target.value)}
-                        className="bg-background/50 border-border/50 focus:border-primary"
-                      />
-                    </div>
+                  <div>
+                    <Label htmlFor={`gender-${character.id}`} className="text-sm font-medium mb-2 block">Gender</Label>
+                    <Select onValueChange={(value) => handleInputChange(character.id, 'gender', value)}>
+                      <SelectTrigger id={`gender-${character.id}`} className="bg-background/50 border-border/50">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
