@@ -8,6 +8,8 @@ interface Character {
   imageUrl?: string;
   position: { x: number; y: number };
   action: string;
+  expression?: string;
+  gesture?: string;
 }
 
 interface Scene {
@@ -20,6 +22,21 @@ interface Scene {
 interface AnimatedVideoPlayerProps {
   scenes: Scene[];
 }
+
+// Helper function to get emoji for expressions
+const getExpressionEmoji = (expression: string): string => {
+  const expr = expression.toLowerCase();
+  if (expr.includes('happy') || expr.includes('joy')) return '😊';
+  if (expr.includes('sad') || expr.includes('cry')) return '😢';
+  if (expr.includes('surprise') || expr.includes('shock')) return '😲';
+  if (expr.includes('angry') || expr.includes('mad')) return '😠';
+  if (expr.includes('think') || expr.includes('wonder')) return '🤔';
+  if (expr.includes('excite') || expr.includes('eager')) return '🤩';
+  if (expr.includes('worr') || expr.includes('nervous')) return '😰';
+  if (expr.includes('love') || expr.includes('adore')) return '😍';
+  if (expr.includes('scar') || expr.includes('fear')) return '😨';
+  return '😐';
+};
 
 const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
   const [currentScene, setCurrentScene] = useState(0);
@@ -75,7 +92,7 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
           />
         ))}
         
-        {/* Animated characters with smooth transitions */}
+        {/* Animated characters with expressions and gestures */}
         {scene.characters?.map((character, idx) => character.imageUrl && (
           <div
             key={`${currentScene}-${idx}`}
@@ -84,20 +101,41 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
               left: `${character.position.x}%`,
               bottom: `${character.position.y}%`,
               transform: 'translateX(-50%)',
-              animation: character.action === 'active' 
+              animation: character.action !== 'idle' 
                 ? 'bounce 2s ease-in-out infinite, fadeIn 0.8s ease-in' 
                 : 'gentle-float 3s ease-in-out infinite, fadeIn 0.8s ease-in',
               animationDelay: `${idx * 0.2}s`
             }}
           >
-            <img
-              src={character.imageUrl}
-              alt={character.name}
-              className="h-32 w-auto object-contain drop-shadow-2xl transition-all duration-700"
-              style={{
-                filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.5))'
-              }}
-            />
+            <div className="relative">
+              <img
+                src={character.imageUrl}
+                alt={character.name}
+                className="h-32 w-auto object-contain drop-shadow-2xl transition-all duration-700"
+                style={{
+                  filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.5))'
+                }}
+              />
+              
+              {/* Expression indicator */}
+              {character.expression && character.expression !== 'neutral' && (
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/70 px-3 py-1 rounded-full text-xs text-white whitespace-nowrap animate-fade-in">
+                  {getExpressionEmoji(character.expression)} {character.expression}
+                </div>
+              )}
+              
+              {/* Gesture/Action indicator */}
+              {character.gesture && character.gesture !== 'standing' && (
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-primary/80 px-2 py-1 rounded-full text-xs text-white whitespace-nowrap animate-fade-in">
+                  {character.gesture}
+                </div>
+              )}
+            </div>
+            
+            {/* Character name tag */}
+            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary/90 to-secondary/90 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg">
+              {character.name}
+            </div>
           </div>
         ))}
         

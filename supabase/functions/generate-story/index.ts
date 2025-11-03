@@ -36,14 +36,23 @@ serve(async (req) => {
         ).join('\n')}`
       : '';
 
-    const systemPrompt = `You are a creative story animator. Your job is to transform stories into detailed animation scripts. 
+    const systemPrompt = `You are a creative story animator. Your job is to transform stories into detailed animation scripts with character expressions and gestures.
 
 For the given story, create a structured animation breakdown with:
 1. A captivating title
-2. Scene-by-scene breakdown with timing
-3. Character actions and emotions
+2. Scene-by-scene breakdown (5-8 scenes max)
+3. For EACH character in EACH scene, specify:
+   - Their expression (e.g., happy, sad, surprised, angry, thinking, excited, worried)
+   - Their gesture (e.g., waving, pointing, hands on hips, arms crossed, clapping, covering mouth, reaching out)
+   - Their action (e.g., walking, running, jumping, sitting, standing)
 4. Camera angles and visual effects
-5. Background music suggestions
+5. Background setting description
+
+Format each scene clearly like this:
+Scene [number]: [Scene title]
+Setting: [Detailed environment description]
+[Character Name]: Expression - [emotion], Gesture - [hand movement], Action - [what they're doing]
+[Narration text for the scene]
 
 Make it vivid, detailed, and production-ready.${characterContext}`;
 
@@ -92,20 +101,49 @@ Make it vivid, detailed, and production-ready.${characterContext}`;
     console.log("Animation generated successfully");
 
     // Parse scenes and generate images for key scenes
-    const scenes = generatedAnimation.split(/Scene \d+:|Scene:|###/).filter((s: string) => s.trim());
+    const sceneBlocks = generatedAnimation.split(/Scene \d+:/i).filter((s: string) => s.trim());
     const sceneImages = [];
 
-    // Generate images for first 5 scenes with character and camera info
-    for (let i = 0; i < Math.min(5, scenes.length); i++) {
-      const sceneText = scenes[i].trim().substring(0, 500);
+    // Generate images for first 5 scenes with detailed character info
+    for (let i = 0; i < Math.min(5, sceneBlocks.length); i++) {
+      const sceneText = sceneBlocks[i].trim();
+      const scenePreview = sceneText.substring(0, 800);
       
       try {
-        // Extract character actions and emotions from scene text for animation data
-        const characterNames = activeCharacters.map((c: any) => c.name).join(', ');
+        // Extract setting/background description
+        const settingMatch = sceneText.match(/Setting:\s*([^\n]+)/i);
+        const settingDescription = settingMatch ? settingMatch[1] : scenePreview.substring(0, 200);
         
-        const backgroundPrompt = `Create a cinematic animated background for this scene: ${sceneText}. 
-Style: vibrant, animated, story-book illustration background without characters. 
-Focus on the setting, environment, and atmosphere.`;
+        // Extract character-specific info from the scene
+        const characterInfo = activeCharacters.map((char: any, idx: number) => {
+          const charName = char.name || '';
+          const charRegex = new RegExp(`${charName}[:\\s]*(?:Expression[\\s-]*([^,\\n]+))?[,\\s]*(?:Gesture[\\s-]*([^,\\n]+))?[,\\s]*(?:Action[\\s-]*([^\\n]+))?`, 'i');
+          const charMatch = sceneText.match(charRegex);
+          
+          // Extract expression, gesture, and action
+          const expression = charMatch?.[1]?.trim().toLowerCase() || 'neutral';
+          const gesture = charMatch?.[2]?.trim().toLowerCase() || 'standing';
+          const action = charMatch?.[3]?.trim().toLowerCase() || 'idle';
+          
+          // Determine if character is active in this scene
+          const isActive = sceneText.toLowerCase().includes(charName.toLowerCase());
+          
+          return {
+            name: charName,
+            imageUrl: char.imageUrl,
+            position: { 
+              x: 15 + (idx * 35), 
+              y: isActive ? 55 : 65 
+            },
+            expression: expression,
+            gesture: gesture,
+            action: isActive ? action : 'idle'
+          };
+        });
+        
+        const backgroundPrompt = `Create a vibrant, cinematic animated storybook background for: ${settingDescription}. 
+Style: colorful, atmospheric illustration without any characters or people. 
+Focus on the environment, lighting, and mood. Make it suitable for an animated story scene.`;
         
         const backgroundResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
@@ -127,24 +165,16 @@ Focus on the setting, environment, and atmosphere.`;
           const backgroundUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
           
           if (backgroundUrl) {
-            // Parse character positions and movements from scene text
-            const characterInfo = activeCharacters.map((char: any, idx: number) => ({
-              name: char.name,
-              imageUrl: char.imageUrl,
-              position: { x: 20 + (idx * 30), y: 60 }, // Default positions
-              action: sceneText.toLowerCase().includes(char.name?.toLowerCase() || '') ? 'active' : 'idle'
-            }));
-
             sceneImages.push({
               sceneNumber: i + 1,
               backgroundUrl: backgroundUrl,
-              text: scenes[i].trim(),
+              text: sceneText.substring(0, 300),
               characters: characterInfo
             });
           }
         }
       } catch (error) {
-        console.error(`Error generating image for scene ${i + 1}:`, error);
+        console.error(`Error generating scene ${i + 1}:`, error);
       }
     }
 
