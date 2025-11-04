@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { story, characters } = await req.json();
+    const { story, characters, storyId, backgroundImage } = await req.json();
     
     if (!story || !story.trim()) {
       return new Response(

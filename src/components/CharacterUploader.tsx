@@ -3,7 +3,14 @@ import { Upload, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Character } from "@/pages/Index";
+
+export interface Character {
+  id: number;
+  image: string | null;
+  name: string;
+  gender: string;
+  role: string;
+}
 
 interface CharacterUploaderProps {
   characters: Character[];

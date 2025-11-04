@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 
-interface Character {
+interface CharacterInScene {
   name: string;
   imageUrl?: string;
   position: { x: number; y: number };
@@ -13,14 +13,30 @@ interface Character {
 }
 
 interface Scene {
-  sceneNumber: number;
-  backgroundUrl: string;
-  text: string;
-  characters: Character[];
+  scene: number;
+  background: string;
+  narration: string;
+  characters: Array<{
+    name: string;
+    position: string;
+    action: string;
+    expression?: string;
+    gesture?: string;
+  }>;
+}
+
+export interface Character {
+  id: number;
+  image: string | null;
+  name: string;
+  gender: string;
+  role: string;
 }
 
 interface AnimatedVideoPlayerProps {
+  script: string;
   scenes: Scene[];
+  characters: Character[];
 }
 
 // Helper function to get emoji for expressions
@@ -38,15 +54,44 @@ const getExpressionEmoji = (expression: string): string => {
   return '😐';
 };
 
-const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
+const AnimatedVideoPlayer = ({ script, scenes, characters }: AnimatedVideoPlayerProps) => {
   const [currentScene, setCurrentScene] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // Transform scenes to display format
+  const displayScenes = scenes.map(scene => {
+    const positionToCoord = (pos: string): { x: number; y: number } => {
+      switch(pos.toLowerCase()) {
+        case 'left': return { x: 25, y: 10 };
+        case 'right': return { x: 75, y: 10 };
+        case 'center': return { x: 50, y: 10 };
+        default: return { x: 50, y: 10 };
+      }
+    };
+
+    return {
+      sceneNumber: scene.scene,
+      backgroundUrl: scene.background || 'https://via.placeholder.com/1920x1080/1a1a2e/ffffff?text=Scene+' + scene.scene,
+      text: scene.narration,
+      characters: scene.characters.map(char => {
+        const characterData = characters.find(c => c.name === char.name);
+        return {
+          name: char.name,
+          imageUrl: characterData?.image || undefined,
+          position: positionToCoord(char.position),
+          action: char.action,
+          expression: char.expression,
+          gesture: char.gesture,
+        };
+      })
+    };
+  });
+
   useEffect(() => {
-    if (!isPlaying || scenes.length === 0) return;
+    if (!isPlaying || displayScenes.length === 0) return;
 
     const timer = setTimeout(() => {
-      if (currentScene < scenes.length - 1) {
+      if (currentScene < displayScenes.length - 1) {
         setCurrentScene(currentScene + 1);
       } else {
         setIsPlaying(false);
@@ -55,7 +100,7 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
     }, 5000); // 5 seconds per scene
 
     return () => clearTimeout(timer);
-  }, [currentScene, isPlaying, scenes.length]);
+  }, [currentScene, isPlaying, displayScenes.length]);
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
@@ -67,19 +112,19 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
   };
 
   const handleNext = () => {
-    setCurrentScene(Math.min(scenes.length - 1, currentScene + 1));
+    setCurrentScene(Math.min(displayScenes.length - 1, currentScene + 1));
     setIsPlaying(false);
   };
 
-  if (scenes.length === 0) return null;
+  if (displayScenes.length === 0) return null;
 
-  const scene = scenes[currentScene];
+  const scene = displayScenes[currentScene];
 
   return (
     <Card className="overflow-hidden bg-card/80 backdrop-blur-sm border-primary/20">
       <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden">
         {/* Smooth crossfade backgrounds */}
-        {scenes.map((s, idx) => (
+        {displayScenes.map((s, idx) => (
           <img
             key={`bg-${idx}`}
             src={s.backgroundUrl}
@@ -146,7 +191,7 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
         </div>
         <div className="absolute top-4 right-4 bg-black/60 px-3 py-1 rounded-full z-20">
           <span className="text-white text-sm font-semibold">
-            Scene {currentScene + 1} / {scenes.length}
+            Scene {currentScene + 1} / {displayScenes.length}
           </span>
         </div>
       </div>
@@ -179,7 +224,7 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
             variant="outline"
             size="icon"
             onClick={handleNext}
-            disabled={currentScene === scenes.length - 1}
+            disabled={currentScene === displayScenes.length - 1}
             className="hover:scale-105 transition-transform"
           >
             <SkipForward className="w-5 h-5" />
@@ -189,7 +234,7 @@ const AnimatedVideoPlayer = ({ scenes }: AnimatedVideoPlayerProps) => {
         <div className="mt-4 bg-muted/50 rounded-full h-2 overflow-hidden">
           <div
             className="h-full bg-[var(--gradient-primary)] transition-all duration-300"
-            style={{ width: `${((currentScene + 1) / scenes.length) * 100}%` }}
+            style={{ width: `${((currentScene + 1) / displayScenes.length) * 100}%` }}
           />
         </div>
       </div>

@@ -14,7 +14,112 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      characters: {
+        Row: {
+          created_at: string
+          gender: string
+          id: string
+          image: string
+          name: string
+          role: string
+          story_id: string
+        }
+        Insert: {
+          created_at?: string
+          gender: string
+          id?: string
+          image: string
+          name: string
+          role: string
+          story_id: string
+        }
+        Update: {
+          created_at?: string
+          gender?: string
+          id?: string
+          image?: string
+          name?: string
+          role?: string
+          story_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "characters_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      slides: {
+        Row: {
+          animated_image: string | null
+          created_at: string
+          id: string
+          script: string
+          slide_number: number
+          story_id: string
+        }
+        Insert: {
+          animated_image?: string | null
+          created_at?: string
+          id?: string
+          script: string
+          slide_number: number
+          story_id: string
+        }
+        Update: {
+          animated_image?: string | null
+          created_at?: string
+          id?: string
+          script?: string
+          slide_number?: number
+          story_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slides_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stories: {
+        Row: {
+          background_image: string | null
+          created_at: string
+          description: string
+          id: string
+          story_image: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          background_image?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          story_image?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          background_image?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          story_image?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,34 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import Hero from "@/components/Hero";
 import Explore from "@/components/Explore";
-import CharacterUploader from "@/components/CharacterUploader";
-import StoryInput from "@/components/StoryInput";
+import HowItWorks from "@/components/HowItWorks";
+import StoryCreator from "@/components/StoryCreator";
 import Scopes from "@/components/Scopes";
 import AboutUs from "@/components/AboutUs";
 import Footer from "@/components/Footer";
-
-export interface Character {
-  id: number;
-  image: string | null;
-  name: string;
-  gender: string;
-  role: string;
-}
+import { Loader2 } from "lucide-react";
 
 const Index = () => {
-  const [characters, setCharacters] = useState<Character[]>([
-    { id: 1, image: null, name: "", gender: "", role: "" },
-    { id: 2, image: null, name: "", gender: "", role: "" },
-    { id: 3, image: null, name: "", gender: "", role: "" },
-    { id: 4, image: null, name: "", gender: "", role: "" },
-  ]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+      setLoading(false);
+    };
+
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
       <Hero />
       <Explore />
-      <CharacterUploader characters={characters} setCharacters={setCharacters} />
-      <StoryInput characters={characters} />
+      <HowItWorks />
+      {user && <StoryCreator />}
       <Scopes />
       <AboutUs />
       <Footer />

@@ -6,6 +6,10 @@ const Hero = () => {
     document.getElementById('creator')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const scrollToAuth = () => {
+    window.location.href = '/auth';
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Cinematic gradient background */}
@@ -29,7 +33,7 @@ const Hero = () => {
         <h1 className="text-5xl md:text-7xl font-bold mb-6 text-foreground leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000">
           Story Visualization with{" "}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            Personalised Character
+            Personalized Character
           </span>
         </h1>
         
@@ -41,19 +45,20 @@ const Hero = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
           <Button 
             size="lg" 
-            onClick={scrollToCreator}
+            onClick={scrollToAuth}
             className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-[var(--shadow-glow)] hover:shadow-[var(--shadow-glow)] hover:scale-105 transition-all duration-300 text-lg px-8 py-6 group"
           >
-            Start Creating
+            Get Started
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           
           <Button 
             size="lg" 
             variant="outline"
+            onClick={scrollToCreator}
             className="border-2 glass-card hover:bg-primary/10 hover:border-primary transition-all duration-300 text-lg px-8 py-6"
           >
-            Watch Demo
+            Start Creating
           </Button>
         </div>
         
